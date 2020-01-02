@@ -8,7 +8,7 @@ using UnityEngine;
 namespace General.Runtime
 {
     [UpdateAfter(typeof(EndFramePhysicsSystem))]
-    public class OneTimeDamageSystem : JobComponentSystem
+    public class BulletDamageSystem : JobComponentSystem
     {
         private StepPhysicsWorld stepPhysicsWorld;
         private BuildPhysicsWorld buildPhysicsWorld;
@@ -38,9 +38,6 @@ namespace General.Runtime
 
                 var isBodyATrigger = triggerDamageFactorGroup.Exists(entityA);
                 var isBodyBTrigger = triggerDamageFactorGroup.Exists(entityB);
-
-                Debug.Log($"Entity {entityA.Index}");
-                Debug.Log($"Entity {entityB.Index}");
 
                 // Ignoring Damages overlapping other Damages
                 if (isBodyATrigger && isBodyBTrigger)

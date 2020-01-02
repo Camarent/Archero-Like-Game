@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Shooting.Common;
 using Unity.Entities;
 using UnityEngine;
 

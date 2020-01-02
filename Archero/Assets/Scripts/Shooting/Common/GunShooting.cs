@@ -3,7 +3,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.VFX;
 
-namespace General.Common
+namespace Shooting.Common
 {
     public class GunShooting : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace General.Common
         protected EntityManager manager;
         protected Entity bulletEntity;
 
-        private void Start()
+        protected virtual void Start()
         {
             manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -49,7 +49,7 @@ namespace General.Common
                 SpawnAudio();
         }
 
-        void SpawnBullet()
+        protected virtual void SpawnBullet()
         {
             var bullet = manager.Instantiate(bulletEntity);
 
@@ -60,12 +60,12 @@ namespace General.Common
             //manager.AddSharedComponentData(bullet, new LineStyle { material = material });
         }
 
-        void SpawnVFX()
+        protected virtual void SpawnVFX()
         {
             shootVfx.Play();
         }
 
-        void SpawnAudio()
+        protected virtual void SpawnAudio()
         {
             shootAudio.PlayDelayed(300);
         }

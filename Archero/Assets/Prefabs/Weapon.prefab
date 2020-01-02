@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1506283215081877670}
   - component: {fileID: 1506283215081877667}
   - component: {fileID: 1506283215081877668}
-  - component: {fileID: 1506283215081877669}
   - component: {fileID: -7566792037220601887}
   - component: {fileID: 6043256615709970982}
   m_Layer: 0
@@ -83,19 +82,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &1506283215081877669
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1506283215081877671}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-7566792037220601887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,7 +97,8 @@ MonoBehaviour:
   shootPoint: {fileID: 1496485602651435063}
   bulletPrefab: {fileID: 8500171969238958863, guid: ab83645311f6c1543a7981564f1b46a6,
     type: 3}
-  shootVFX: {fileID: 0}
+  material: {fileID: 2100000, guid: e22281d240d2f3c4d95df116a1144001, type: 2}
+  shootVfx: {fileID: 0}
   shootAudio: {fileID: 6043256615709970982}
   fireRate: 0.1
 --- !u!82 &6043256615709970982
