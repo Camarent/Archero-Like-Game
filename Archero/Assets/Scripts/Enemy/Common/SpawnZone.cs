@@ -13,6 +13,7 @@ public class SpawnZone : MonoBehaviour
     public int maxAmount;
 
     public float offsetY = 1;
+    public float space = 1;
 
     private EntityManager manager;
     private BlobAssetStore store;
@@ -50,8 +51,28 @@ public class SpawnZone : MonoBehaviour
         for (var i = 0; i < amount; i++)
         {
             var spawned = entities[i];
-            manager.SetComponentData(spawned, new Translation {Value = GetPositionInsideZone()});
-            manager.SetComponentData(spawned, new Rotation {Value = GetRandomRotation()});
+            var attempts = 5;
+            while (attempts > 0)
+            {
+                var position = GetPositionInsideZone();
+
+                var isItFree = true;
+                for (var j = 0; j < i - 1; j++)
+                {
+                    if (Vector3.Distance(position, manager.GetComponentData<Translation>(entities[j]).Value) < space)
+                        isItFree = false;
+                }
+
+                if (!isItFree)
+                {
+                    ++attempts;
+                    continue;
+                }
+                
+                manager.SetComponentData(spawned, new Translation {Value = position});
+                manager.SetComponentData(spawned, new Rotation {Value = GetRandomRotation()});
+                break;
+            }
         }
     }
 

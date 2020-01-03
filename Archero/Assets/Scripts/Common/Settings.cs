@@ -1,5 +1,8 @@
-﻿using Movement.Common;
+﻿using System;
+using Movement.Common;
+using Player;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Settings : MonoBehaviour
 {
@@ -8,14 +11,19 @@ public class Settings : MonoBehaviour
 	[Header("Game Object References")]
 	public Transform player;
 
-	[Header("Collision Info")]
-	public float playerCollisionRadius = .5f;
-	public static float PlayerCollisionRadius => instance.playerCollisionRadius;
+	public static Vector3 PlayerPosition => instance.player.position;
 
-    public float enemyCollisionRadius = 1f;
-	public static float EnemyCollisionRadius => instance.enemyCollisionRadius;
-
-    public static Vector3 PlayerPosition => instance.player.position;
+    public static event Action<int> CoinChanged;
+    private int _coins;
+    public int Coins
+    {
+	    get => _coins;
+	    set
+	    {
+		    _coins = value;
+		    CoinChanged?.Invoke(_coins);
+	    }
+    }
 
     void Awake()
 	{
@@ -43,7 +51,7 @@ public class Settings : MonoBehaviour
 		if (instance.player == null)
 			return;
 
-		var playerMove = instance.player.GetComponent<PlayerMovement>();
+		var playerMove = instance.player.GetComponent<PlayerMovementAndLook>();
 		playerMove.PlayerDied();
 
 		instance.player = null;

@@ -23,6 +23,7 @@ namespace NavJob.Systems
 
     public class NavAgentSystem : JobComponentSystem
     {
+        protected static NavAgentSystem Instance;
 
         private struct AgentData
         {
@@ -36,6 +37,14 @@ namespace NavJob.Systems
         private NativeHashMap<int, AgentData> _pathFindingData;
 
 
+        private EntityQuery _agentQuery;
+        private NavMeshQuerySystem _querySystem;
+        private SetDestinationBarrier _setDestinationBarrier;
+        private PathSuccessBarrier _pathSuccessBarrier;
+        private PathErrorBarrier _pathErrorBarrier;
+
+
+        [BurstCompile]
         private struct DetectNextWaypointJob : IJobParallelFor
         {
             public int navMeshQuerySystemVersion;
@@ -64,7 +73,6 @@ namespace NavJob.Systems
                     agent.totalWaypoints = 0;
                     agent.currentWaypoint = 0;
                     agent.status = AgentStatus.Idle;
-                    Debug.Log($"Agent {entity.Index} status: {agent.status}");
                     Agents[entity] = agent;
                 }
             }
@@ -91,6 +99,7 @@ namespace NavJob.Systems
         }
 
 
+        [BurstCompile]
         private struct MovementJob : IJobParallelFor
         {
             public float DeltaTime;
@@ -142,12 +151,6 @@ namespace NavJob.Systems
             }
         }
 
-        private EntityQuery _agentQuery;
-        private NavMeshQuerySystem _querySystem;
-        private SetDestinationBarrier _setDestinationBarrier;
-        private PathSuccessBarrier _pathSuccessBarrier;
-        private PathErrorBarrier _pathErrorBarrier;
-
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var entityCnt = _agentQuery.CalculateEntityCount();
@@ -193,7 +196,6 @@ namespace NavJob.Systems
             {
                 var command = _setDestinationBarrier.CreateCommandBuffer();
                 agent.status = AgentStatus.PathQueued;
-                Debug.Log($"Agent {entity.Index} status: {agent.status}");
                 agent.destination = destination;
                 agent.queryVersion = _querySystem.Version;
                 command.SetComponent<NavAgent>(entity, agent);
@@ -211,8 +213,6 @@ namespace NavJob.Systems
         {
             Instance.SetDestination(entity, agent, destination, areas);
         }
-
-        protected static NavAgentSystem Instance;
 
         protected override void OnCreate()
         {
@@ -247,7 +247,6 @@ namespace NavJob.Systems
             _waypoints[entity.Index] = newWaypoints;
             var command = _pathSuccessBarrier.CreateCommandBuffer();
             agent.status = AgentStatus.Moving;
-            Debug.Log($"Agent {entity.Index} status: {agent.status}");
             agent.nextWaypointIndex = 1;
             agent.totalWaypoints = newWaypoints.Length;
             agent.currentWaypoint = newWaypoints[0];
@@ -269,7 +268,6 @@ namespace NavJob.Systems
             if (_pathFindingData.TryGetValue(index, out AgentData entry))
             {
                 entry.agent.status = AgentStatus.Idle;
-                Debug.Log($"Agent {entry.entity.Index} status: {entry.agent.status}");
                 var command = _pathErrorBarrier.CreateCommandBuffer();
                 command.SetComponent<NavAgent>(entry.entity, entry.agent);
                 _pathFindingData.Remove(index);

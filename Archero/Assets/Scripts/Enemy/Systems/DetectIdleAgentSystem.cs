@@ -1,5 +1,6 @@
 ﻿using NavJob.Components;
 using NavJob.Systems;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -27,6 +28,7 @@ namespace Enemy.Systems
         private Transform _playerTransform;
         private Vector3 _prevPlayerPosition;
 
+        [BurstCompile]
         private struct DetectIdleAgentJob : IJobParallelFor
         {
             [ReadOnly] public bool _positionChanged;
@@ -38,13 +40,12 @@ namespace Enemy.Systems
             {
                 var entity = Entities[index];
                 var agent = Agents[entity];
-            
-                if (agent.status != AgentStatus.Idle && !_positionChanged) 
+
+                if (agent.status != AgentStatus.Idle && !_positionChanged)
                     return;
-            
+
                 NeedsPath.Enqueue(new AgentData {index = index, agent = agent, entity = entity});
                 agent.status = AgentStatus.PathQueued;
-                Debug.Log($"Agent {entity.Index} status: {agent.status}");
                 Agents[entity] = agent;
             }
         }
@@ -62,7 +63,7 @@ namespace Enemy.Systems
                 }
             }
         }
-    
+
         protected override void OnUpdate()
         {
             if (Time.ElapsedTime > _nextUpdate)
@@ -73,22 +74,23 @@ namespace Enemy.Systems
             var entityCnt = _agentQuery.CalculateEntityCount();
             var entities = _agentQuery.ToEntityArray(Allocator.TempJob);
 
+            var targetPosition = Settings.IsPlayerDead() ? _prevPlayerPosition : Settings.PlayerPosition;
             var inputDeps = new DetectIdleAgentJob
             {
-                _positionChanged = Vector3.Distance(Settings.PlayerPosition, _prevPlayerPosition) > 0.05f,
+                _positionChanged = Vector3.Distance(targetPosition, _prevPlayerPosition) > 0.05f,
                 Entities = entities,
                 Agents = GetComponentDataFromEntity<NavAgent>(),
                 NeedsPath = _needsPath.AsParallelWriter()
             }.Schedule(entityCnt, 64);
             inputDeps = new SetNextPathJob
             {
-                playerPosition = Settings.PlayerPosition,
+                playerPosition = targetPosition,
                 NeedsPath = _needsPath
             }.Schedule(inputDeps);
 
             inputDeps.Complete();
             entities.Dispose();
-            _prevPlayerPosition = Settings.PlayerPosition;
+            _prevPlayerPosition = targetPosition;
         }
 
         protected override void OnCreate()
