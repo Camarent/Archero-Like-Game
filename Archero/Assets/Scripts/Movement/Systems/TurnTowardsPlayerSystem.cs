@@ -1,4 +1,5 @@
-﻿using General.Runtime;
+﻿using Common;
+using General.Runtime;
 using Scripts.ECS.RuntimeComponents;
 using Unity.Collections;
 using Unity.Entities;
@@ -24,10 +25,10 @@ namespace Movement.Systems
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (Settings.IsPlayerDead())
+            if (PlayerSettings.IsPlayerDead())
                 return inputDeps;
 
-            var job = new TurnToPlayer {PlayerPosition = Settings.PlayerPosition};
+            var job = new TurnToPlayer {PlayerPosition = PlayerSettings.PlayerPosition};
             return job.Schedule(this, inputDeps);
         }
     }

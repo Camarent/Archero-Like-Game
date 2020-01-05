@@ -1,4 +1,5 @@
-﻿using General.Runtime;
+﻿using Common;
+using General.Runtime;
 using Unity.Entities;
 using Unity.Transforms;
 
@@ -15,12 +16,15 @@ namespace General.Systems
 
                 if (EntityManager.HasComponent(entity, typeof(PlayerTag)))
                 {
-                    Settings.PlayerDied();
+                    PlayerSettings.PlayerDied();
                 }
                 else if (EntityManager.HasComponent(entity, typeof(EnemyTag)))
                 {
                     PostUpdateCommands.DestroyEntity(entity);
                     BulletImpactPool.PlayBulletImpact(translation.Value);
+                    
+                    var instantiated = PostUpdateCommands.Instantiate(PlayerSettings.Coin);
+                    PostUpdateCommands.SetComponent(instantiated, new Translation {Value = translation.Value});
                 }
                 else if (EntityManager.HasComponent<BulletTag>(entity))
                 {

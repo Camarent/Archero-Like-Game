@@ -10,7 +10,7 @@ namespace Common
 
         void Start()
         {
-            Settings.CoinChanged += IncreaseCoin;
+            PlayerSettings.CoinChanged += IncreaseCoin;
         }
 
         private void IncreaseCoin(int coinCount)

@@ -10,6 +10,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using NavJob.Components;
+using Unity.Transforms;
 
 namespace NavJob.Systems
 {
@@ -30,6 +31,8 @@ namespace NavJob.Systems
             public NativeArray<Entity> Entities;
             [NativeDisableParallelForRestriction]
             public ComponentDataFromEntity<NavAgent> Agents;
+            public ComponentDataFromEntity<Translation> Translations;
+            public ComponentDataFromEntity<Rotation> Rotations;
             //public ComponentDataFromEntity<NavAgentAvoidance> avoidances;
 
             [ReadOnly] public NativeMultiHashMap<int, int> indexMap;
@@ -40,7 +43,7 @@ namespace NavJob.Systems
 
             public void ExecuteNext(int firstIndex, int index)
             {
-                var entity = Entities[index];
+                /*var entity = Entities[index];
                 var agent = Agents[entity];
 
                 var move = Vector3.left;
@@ -49,7 +52,7 @@ namespace NavJob.Systems
                     move = Vector3.right;
                 }
 
-                float3 drift = math.mul(agent.rotation, DeltaTime) * agent.currentMoveSpeed * (Vector3.forward + move);
+                float3 drift = math.mul(Rotations[entity].Value, DeltaTime) * agent.currentMoveSpeed * (Vector3.forward + move);
                 if (agent.nextWaypointIndex != agent.totalWaypoints)
                 {
                     var offsetWaypoint = agent.currentWaypoint + drift;
@@ -60,7 +63,7 @@ namespace NavJob.Systems
                     }
                 }
                 agent.currentMoveSpeed = Mathf.Max(agent.currentMoveSpeed / 2f, 0.5f);
-                var positionInfo = NavMeshQuery.MapLocation(agent.position + drift, Vector3.one * 3f, 0, agent.areaMask);
+                var positionInfo = NavMeshQuery.MapLocation(Translations[entity].Value + drift, Vector3.one * 3f, 0, agent.areaMask);
                 if (NavMeshQuery.IsValid(positionInfo))
                 {
                     agent.nextPosition = positionInfo.position;
@@ -69,7 +72,7 @@ namespace NavJob.Systems
                 {
                     agent.nextPosition = agent.position;
                 }
-                Agents[entity] = agent;
+                Agents[entity] = agent;*/
             }
         }
 
@@ -88,14 +91,14 @@ namespace NavJob.Systems
 
             public void Execute(int index)
             {
-                var entity = Entities[index];
+                /*var entity = Entities[index];
                 var agent = Agents[entity];
                 var avoidance = Avoidances[entity];
                 var hash = Hash(agent.position, avoidance.radius);
                 IndexMap.Add(hash, index);
                 NextPositionMap.Add(hash, agent.nextPosition);
                 avoidance.partition = hash;
-                Avoidances[entity] = avoidance;
+                Avoidances[entity] = avoidance;*/
             }
 
             public int Hash(float3 position, float radius)

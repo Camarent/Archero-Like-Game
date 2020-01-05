@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common;
 using Shooting.Common;
 using Unity.Entities;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace General.Common
 
         [SerializeField] private GunShooting currentGun;
 
+        public GameObjectConversionSettings Settings { get; private set; }
+        
         private int currentIndex;
         private BlobAssetStore store;
 
@@ -19,11 +22,11 @@ namespace General.Common
         {
             store = new BlobAssetStore();
 
-            var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, store);
+            Settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, store);
 
             foreach (var weapon in weapons)
             {
-                weapon.settings = settings;
+                weapon.settings = Settings;
                 weapon.gameObject.SetActive(false);
             }
 
@@ -33,7 +36,7 @@ namespace General.Common
 
         void OnFire()
         {
-            if (!Settings.IsPlayerDead())
+            if (!PlayerSettings.IsPlayerDead())
                 currentGun.Shoot();
         }
 

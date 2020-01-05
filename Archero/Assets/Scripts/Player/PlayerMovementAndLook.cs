@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Common;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Player
@@ -37,6 +38,9 @@ namespace Player
 
         private void FixedUpdate()
         {
+            if (GameManager.Instance.GameStatus != GameManager.Status.Play)
+                return;
+            
             Move();
             TurnThePlayer();
         }
@@ -69,7 +73,7 @@ namespace Player
         void TurnThePlayer()
         {
             var worldPoint = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            
+
             if (!Physics.Raycast(worldPoint, Vector3.down, out var hit, float.MaxValue, whatIsGround)) return;
 
             var playerToMouse = hit.point - transform.position;

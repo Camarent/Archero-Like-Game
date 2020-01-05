@@ -1,4 +1,5 @@
-﻿using General.Runtime;
+﻿using Common;
+using General.Runtime;
 using Scripts.ECS.RuntimeComponents;
 using Unity.Entities;
 using Unity.Transforms;
@@ -9,11 +10,11 @@ namespace Scripts.ECS.Systems
     {
         protected override void OnUpdate()
         {
-            if (Settings.IsPlayerDead()) return;
+            if (PlayerSettings.IsPlayerDead()) return;
 
             Entities.WithAll<PlayerTag>().ForEach((ref Translation translation) =>
                 {
-                    translation.Value = Settings.PlayerPosition;
+                    translation.Value = PlayerSettings.PlayerPosition;
                 });
         }
     }

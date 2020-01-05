@@ -1,5 +1,6 @@
 ﻿using Demo;
 using NavJob.Components;
+using NavJob.Systems;
 using Unity.Entities;
 using UnityEngine;
 
@@ -18,8 +19,6 @@ namespace Enemy.Authoring
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             var navAgent = new NavAgent(
-                transform.position,
-                Quaternion.identity,
                 AgentStoppingDistance,
                 AgentMoveSpeed,
                 AgentAcceleration,
@@ -27,10 +26,6 @@ namespace Enemy.Authoring
                 AgentAreaMask
             );
 
-            dstManager.AddComponent<SyncPositionFromNavAgent>(entity);
-            dstManager.AddComponent<SyncPositionToNavAgent>(entity);
-            dstManager.AddComponent<SyncRotationFromNavAgent>(entity);
-            dstManager.AddComponent<SyncRotationToNavAgent>(entity);
             dstManager.AddComponentData(entity, navAgent);
         }
     }

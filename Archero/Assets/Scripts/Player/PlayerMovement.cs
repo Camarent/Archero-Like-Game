@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Common;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Movement.Common
@@ -88,7 +89,7 @@ namespace Movement.Common
                 return;
 
             if (--playerHealth <= 0)
-                Settings.PlayerDied();
+                PlayerSettings.PlayerDied();
         }
 
         public void PlayerDied()

@@ -1,96 +1,73 @@
-﻿using System;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Transforms;
+﻿using Common;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class SpawnZone : MonoBehaviour
+namespace Enemy.Common
 {
-    public GameObject prefab;
-
-    public int minAmount;
-    public int maxAmount;
-
-    public float offsetY = 1;
-    public float space = 1;
-
-    private EntityManager manager;
-    private BlobAssetStore store;
-    private GameObjectConversionSettings settings;
-    private Entity entity;
-
-    void Start()
+    public class SpawnZone : MonoBehaviour
     {
-        manager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        store = new BlobAssetStore();
-        settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, store);
-        entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(prefab, settings);
+        [SerializeField] private SpawnProducerFactory.SpawnType spawnType;
+        [SerializeField] private bool oneTimeSpawn;
+        
+        [SerializeField] private GameObject prefab;
 
-        Spawn();
-    }
+        [SerializeField] private int minAmount;
+        [SerializeField] private int maxAmount;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.O))
-            Spawn();
-    }
+        [SerializeField] private float offsetY = 1;
+        [SerializeField] private float space = 1;
 
-    private void OnDestroy()
-    {
-        store.Dispose();
-    }
+        public int MinAmount => minAmount;
+        public int MaxAmount => maxAmount;
+        public float Space => space;
 
-    void Spawn()
-    {
-        var amount = Random.Range(minAmount, maxAmount);
+        private ISpawnProducerFactory factory;
+        private bool spawned;
 
-        var entities = new NativeArray<Entity>(amount, Allocator.Temp);
-        manager.Instantiate(entity, entities);
-
-        for (var i = 0; i < amount; i++)
+        void Start()
         {
-            var spawned = entities[i];
-            var attempts = 5;
-            while (attempts > 0)
+            factory = GameManager.Instance.SpawnProducerFactory;
+
+            GameManager.Instance.GameStatusChanged += s =>
             {
-                var position = GetPositionInsideZone();
+                spawned = false;
+                if (GameManager.Instance.GameStatus == GameManager.Status.Hold)
+                    Spawn();
+            };
 
-                var isItFree = true;
-                for (var j = 0; j < i - 1; j++)
-                {
-                    if (Vector3.Distance(position, manager.GetComponentData<Translation>(entities[j]).Value) < space)
-                        isItFree = false;
-                }
-
-                if (!isItFree)
-                {
-                    ++attempts;
-                    continue;
-                }
-                
-                manager.SetComponentData(spawned, new Translation {Value = position});
-                manager.SetComponentData(spawned, new Rotation {Value = GetRandomRotation()});
-                break;
-            }
+            if (GameManager.Instance.GameStatus == GameManager.Status.Hold)
+                Spawn();
         }
-    }
 
-    private Quaternion GetRandomRotation()
-    {
-        var y = Random.Range(0f, 360f);
-        return Quaternion.Euler(0, y, 0);
-    }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.O))
+                Spawn();
+        }
 
-    private Vector3 GetPositionInsideZone()
-    {
-        var zoneTransform = transform;
-        var localScale = zoneTransform.localScale;
-        var x = Random.Range(-localScale.x / 2, localScale.x / 2);
-        var z = Random.Range(-localScale.z / 2, localScale.z / 2);
+        public void Spawn()
+        {
+            if(oneTimeSpawn && spawned) return;
 
-        var position = zoneTransform.position;
-        var flooredZonePosition = new Vector3(position.x, -localScale.y / 2 + offsetY, position.z);
-        return flooredZonePosition + new Vector3(x, 0, z);
+            spawned = true;
+            factory.Get(spawnType).Produce(prefab, this);
+        }
+
+        public Quaternion GetRandomRotation()
+        {
+            var y = Random.Range(0f, 360f);
+            return Quaternion.Euler(0, y, 0);
+        }
+
+        public Vector3 GetPositionInsideZone()
+        {
+            var zoneTransform = transform;
+            var localScale = zoneTransform.localScale;
+            var x = Random.Range(-localScale.x / 2, localScale.x / 2);
+            var z = Random.Range(-localScale.z / 2, localScale.z / 2);
+
+            var position = zoneTransform.position;
+            var flooredZonePosition = new Vector3(position.x, -localScale.y / 2 + offsetY, position.z);
+            return flooredZonePosition + new Vector3(x, 0, z);
+        }
     }
 }
