@@ -8,6 +8,14 @@ namespace General.Systems
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class RemoveDeadSystem : ComponentSystem
     {
+        private EntityQuery _enemies;
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+
+            _enemies = GetEntityQuery(typeof(EnemyTag));
+        }
+
         protected override void OnUpdate()
         {
             Entities.ForEach((Entity entity, ref Health health, ref Translation translation) =>
@@ -31,6 +39,10 @@ namespace General.Systems
                     PostUpdateCommands.DestroyEntity(entity);
                 }
             });
+            
+            var count = _enemies.CalculateEntityCount();
+            if(count == 0 && GameManager.Instance.GameStatus == GameManager.Status.Play)
+                GameManager.Instance.Success();
         }
     }
 }

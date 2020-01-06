@@ -81,7 +81,9 @@ namespace Common
         {
             if (_instance.player == null)
                 return;
-
+            
+            GameManager.Instance.Failed();
+            
             _instance.player = null;
             Destroy(_instance.player);
         }

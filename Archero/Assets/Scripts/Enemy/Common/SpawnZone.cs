@@ -1,5 +1,7 @@
-﻿using Common;
+﻿using System;
+using Common;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Enemy.Common
 {
@@ -29,9 +31,23 @@ namespace Enemy.Common
 
             GameManager.Instance.GameStatusChanged += s =>
             {
-                spawned = false;
-                if (GameManager.Instance.GameStatus == GameManager.Status.Hold)
-                    Spawn();
+                switch (s)
+                {
+                    case GameManager.Status.Restart:
+                        spawned = false;
+                        break;
+                    case GameManager.Status.Hold:
+                        Spawn();
+                        break;
+                    case GameManager.Status.Play:
+                        break;
+                    case GameManager.Status.Failed:
+                        break;
+                    case GameManager.Status.Success:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(s), s, null);
+                }
             };
 
             if (GameManager.Instance.GameStatus == GameManager.Status.Hold)
