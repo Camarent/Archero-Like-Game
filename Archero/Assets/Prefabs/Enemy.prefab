@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: -8409892129986542844}
   - component: {fileID: 369925519208545501}
   - component: {fileID: 8859326369640072951}
-  - component: {fileID: -7765892193300915847}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -125,9 +124,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AgentStoppingDistance: 0.5
-  AgentAcceleration: 2
-  AgentMoveSpeed: 3
-  AgentRotationSpeed: 100
+  AgentAcceleration: 4
+  AgentMoveSpeed: 7
+  AgentRotationSpeed: 5
   AgentAvoidanceDiameter: 0.7
   AgentAreaMask: -3
 --- !u!114 &-8409892129986542844
@@ -142,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b275e5f92732148048d7b77e264ac30e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ShapeType: 1
+  m_ShapeType: 3
   m_PrimitiveCenter:
     x: 0
     y: 0
@@ -217,7 +216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MotionType: 0
   m_Mass: 1
-  m_LinearDamping: 1
+  m_LinearDamping: 0.01
   m_AngularDamping: 0.05
   m_InitialLinearVelocity:
     x: 0
@@ -228,10 +227,10 @@ MonoBehaviour:
     y: 0
     z: 0
   m_GravityFactor: 1
-  m_OverrideDefaultMassDistribution: 0
+  m_OverrideDefaultMassDistribution: 1
   m_CenterOfMass:
     x: 0
-    y: 0
+    y: -0.5
     z: 0
   m_Orientation:
     Value:
@@ -267,21 +266,6 @@ MonoBehaviour:
   Time: 0.5
   CurrentTime: 0
   Value: 1
---- !u!114 &-7765892193300915847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456164746715122944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f704049fe1534f1ba0003829ca172ab5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  X: 1
-  Y: 0
-  Z: 1
 --- !u!1 &2489279048634906641
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,7 +24,7 @@ namespace Shooting.Common
         protected EntityManager manager;
         protected Entity bulletEntity;
 
-        protected virtual void Start()
+        public virtual void Initialize()
         {
             manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -40,7 +40,7 @@ namespace Shooting.Common
         {
             if (timer < fireRate) return;
 
-            SpawnBullet();
+            SpawnBullets();
 
             if (shootVfx != null)
                 SpawnVFX();
@@ -49,7 +49,7 @@ namespace Shooting.Common
                 SpawnAudio();
         }
 
-        protected virtual void SpawnBullet()
+        protected virtual void SpawnBullets()
         {
             var bullet = manager.Instantiate(bulletEntity);
 

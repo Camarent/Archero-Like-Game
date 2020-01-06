@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Common;
-using Shooting.Common;
 using Unity.Entities;
 using UnityEngine;
 
-namespace General.Common
+namespace Shooting.Common
 {
     public class PlayerShooting : MonoBehaviour
     {
@@ -18,7 +16,7 @@ namespace General.Common
         private int currentIndex;
         private BlobAssetStore store;
 
-        private void Awake()
+        private void Start()
         {
             store = new BlobAssetStore();
 
@@ -28,19 +26,20 @@ namespace General.Common
             {
                 weapon.settings = Settings;
                 weapon.gameObject.SetActive(false);
+                weapon.Initialize();
             }
 
             if (weapons.Count > 0)
                 ActivateGun(0);
         }
 
-        void OnFire()
+        public void OnFire()
         {
             if (!PlayerSettings.IsPlayerDead())
                 currentGun.Shoot();
         }
 
-        void OnSwitchWeapon()
+        public void OnSwitchWeapon()
         {
             currentGun.gameObject.SetActive(false);
 

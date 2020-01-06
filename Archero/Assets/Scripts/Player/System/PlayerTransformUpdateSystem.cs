@@ -1,10 +1,9 @@
 ﻿using Common;
 using General.Runtime;
-using Scripts.ECS.RuntimeComponents;
 using Unity.Entities;
 using Unity.Transforms;
 
-namespace Scripts.ECS.Systems
+namespace Player.System
 {
     public class PlayerTransformUpdateSystem : ComponentSystem
     {
@@ -12,10 +11,11 @@ namespace Scripts.ECS.Systems
         {
             if (PlayerSettings.IsPlayerDead()) return;
 
-            Entities.WithAll<PlayerTag>().ForEach((ref Translation translation) =>
-                {
-                    translation.Value = PlayerSettings.PlayerPosition;
-                });
+            Entities.WithAll<PlayerTag>().ForEach((ref Translation translation, ref Rotation rotation) =>
+            {
+               PlayerSettings.PlayerTransform.position = translation.Value;
+               PlayerSettings.PlayerTransform.rotation = rotation.Value;
+            });
         }
     }
 }

@@ -492,10 +492,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1326197701, guid: 5e475f6e2318a6848be4204d5a0fedd2, type: 3}
+      propertyPath: prefab
+      value: 
+      objectReference: {fileID: 5490586672013985715, guid: c6cb379d8284dcd48b024db23c8e0197,
+        type: 3}
     - target: {fileID: 4626596280226343038, guid: 5e475f6e2318a6848be4204d5a0fedd2,
         type: 3}
       propertyPath: m_Name
       value: PlayerSpawnZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4626596280226343038, guid: 5e475f6e2318a6848be4204d5a0fedd2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8134148994517192729, guid: 5e475f6e2318a6848be4204d5a0fedd2,
         type: 3}

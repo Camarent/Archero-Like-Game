@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2294915293892275664}
   - component: {fileID: 1326197701}
   m_Layer: 0
-  m_Name: SpawnerZone
+  m_Name: PlayerSpawnerZone
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnType: 0
   oneTimeSpawn: 1
-  prefab: {fileID: 5490586672013985715, guid: c6cb379d8284dcd48b024db23c8e0197, type: 3}
+  prefab: {fileID: 5490586672013985715, guid: fbea337a4bfce384b9142153cc7df35c, type: 3}
   minAmount: 1
   maxAmount: 1
   offsetY: 1

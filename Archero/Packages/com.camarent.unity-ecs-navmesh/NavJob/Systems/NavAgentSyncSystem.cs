@@ -109,7 +109,7 @@ namespace NavJob.Systems
             CreatePhysicsWorldSystem = World.GetOrCreateSystem<BuildPhysicsWorld>();
         }
 
-        private struct NavAgentToPhysicsVelocitySyncSystemJob : IJobForEach<NavAgent, Rotation, PhysicsMass, PhysicsVelocity>
+        /*private struct NavAgentToPhysicsVelocitySyncSystemJob : IJobForEach<NavAgent, Rotation, PhysicsMass, PhysicsVelocity>
         {
             public void Execute([ReadOnly] ref NavAgent agent, ref Rotation rotation, ref PhysicsMass mass, ref PhysicsVelocity velocity)
             {
@@ -123,7 +123,7 @@ namespace NavJob.Systems
                 velocity.ApplyAngularImpulse(mass, agent.targetAngularVelocity);
                 Debug.Log($"Applied angular: {velocity.Angular}");
             }
-        }
+        }*/
 
         protected override void OnUpdate()
         {
@@ -137,18 +137,18 @@ namespace NavJob.Systems
 
                 var linearVelocity = agent.targetLinearVelocity;
                 linearVelocity.y = 0;
-                // world.ApplyLinearImpulse(index, linearVelocity);
-                Debug.Log($"Applied angular Target: {agent.targetAngularVelocity}");
+                world.ApplyLinearImpulse(index, linearVelocity);
+//                Debug.Log($"Applied angular Target: {agent.targetAngularVelocity}");
 
                 /*var md = world.MotionDatas[index];
                 float3 angularImpulseWorldSpace = math.cross(md.WorldFromMotion.pos, agent.targetLinearVelocity);
                 float3 angularImpulseMotionSpace = math.rotate(math.inverse(md.WorldFromMotion.rot), angularImpulseWorldSpace);*/
-                NativeSlice<MotionVelocity> motionVelocities = world.MotionVelocities;
-                MotionVelocity mv = motionVelocities[index];
-                mv.AngularVelocity = agent.targetAngularVelocity * 2;
+                //NativeSlice<MotionVelocity> motionVelocities = world.MotionVelocities;
+                //MotionVelocity mv = motionVelocities[index];
+                //mv.AngularVelocity = agent.targetAngularVelocity * 2;
                 //mv.ApplyAngularImpulse(agent.targetAngularVelocity);
-                motionVelocities[index] = mv;
-                //world.ApplyAngularImpulse(index, agent.targetAngularVelocity);
+                //motionVelocities[index] = mv;
+                world.ApplyAngularImpulse(index, agent.targetAngularVelocity);
             });
         }
     }

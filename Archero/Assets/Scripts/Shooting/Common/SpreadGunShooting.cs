@@ -15,7 +15,7 @@ namespace General.Common
 
         [SerializeField] private int angle = 3;
 
-        protected override void SpawnBullet()
+        protected override void SpawnBullets()
         {
             var amount = width * height;
             var maxHeight = height > 2 ? height / 2 : height;

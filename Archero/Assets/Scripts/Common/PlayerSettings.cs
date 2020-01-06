@@ -1,6 +1,7 @@
 ﻿using System;
 using General.Common;
 using Player;
+using Shooting.Common;
 using Unity.Entities;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,6 +18,7 @@ namespace Common
         private Transform player;
 
         public static Vector3 PlayerPosition => _instance.player.position;
+        public static Transform PlayerTransform => _instance.player;
         public static float CoinSpeed => 1f;
 
         private Entity coin;
@@ -79,9 +81,6 @@ namespace Common
         {
             if (_instance.player == null)
                 return;
-
-            var playerMove = _instance.player.GetComponent<PlayerMovementAndLook>();
-            playerMove.PlayerDied();
 
             _instance.player = null;
             Destroy(_instance.player);

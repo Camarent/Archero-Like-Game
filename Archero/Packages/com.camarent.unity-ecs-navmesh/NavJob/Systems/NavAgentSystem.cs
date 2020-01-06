@@ -3,6 +3,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using NavJob.Components;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -142,68 +143,10 @@ namespace NavJob.Systems
         }
     }
 
-    public static class MathHelper
-    {
-        public static float Angle(float3 from, float3 to)
-        {
-            double num = math.sqrt(math.lengthsq(from) * math.lengthsq(to));
-            return num < 1.00000000362749E-15 ? 0.0f : (float) math.acos(math.clamp(math.dot(from, to) / num, -1f, 1f)) * 57.29578f;
-        }
-
-        public static float SignedAngle(float3 from, float3 to, float3 axis)
-        {
-            var num1 = Angle(from, to);
-            var num2 = (float) (from.y * (double) to.z - from.z * (double) to.y);
-            var num3 = (float) (from.z * (double) to.x - from.x * (double) to.z);
-            var num4 = (float) (from.x * (double) to.y - from.y * (double) to.x);
-            var num5 = Mathf.Sign((float) (axis.x * (double) num2 + axis.y * (double) num3 + axis.z * (double) num4));
-            return num1 * num5;
-        }
-
-        public static float3 Euler(this quaternion quaternion)
-        {
-            var q = quaternion.value;
-            double3 res;
-
-            var sinr_cosp = +2.0 * (q.w * q.x + q.y * q.z);
-            var cosr_cosp = +1.0 - 2.0 * (q.x * q.x + q.y * q.y);
-            res.x = math.atan2(sinr_cosp, cosr_cosp);
-
-            var sinp = +2.0 * (q.w * q.y - q.z * q.x);
-            if (math.abs(sinp) >= 1)
-            {
-                res.y = math.PI / 2 * math.sign(sinp);
-            }
-            else
-            {
-                res.y = math.asin(sinp);
-            }
-
-            var siny_cosp = +2.0 * (q.w * q.z + q.x * q.y);
-            var cosy_cosp = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);
-            res.z = math.atan2(siny_cosp, cosy_cosp);
-            return (float3) res;
-        }
-
-        public static void ToAngleAxis(this quaternion quaternion, out float angle, out float3 axis)
-        {
-            quaternion.ToAngleAxisRad(out angle, out axis);
-            angle = math.degrees(angle);
-        }
-
-        public static void ToAngleAxisRad(this quaternion q, out float angle, out float3 axis)
-        {
-            if (math.abs(q.value.w) > 1.0f)
-                q = math.normalize(q);
-            angle = 2.0f * math.acos(q.value.w); // angle
-            var den = math.sqrt(1.0 - q.value.w * q.value.w);
-            axis = den > 0.0001f ? q.value.xyz : new float3(1, 0, 0);
-        }
-    }
-
     [UpdateAfter(typeof(EndFramePhysicsSystem))]
     public class NavAgentMoveSystem : JobComponentSystem
     {
+        [BurstCompile]
         private struct MovementJob : IJobForEach<NavAgent, Translation, Rotation, NavAgentTarget, PathQueryResult>
         {
             public float deltaTime;
@@ -222,16 +165,14 @@ namespace NavJob.Systems
                 var isOnPoint = agent.remainingDistance < agent.stoppingDistance;
                 if (isOnPoint)
                 {
-                    Debug.Log("Complete waypoint");
                     agent.status = pathQuery.status == NavAgentQuerySystem.PathStatus.Success ? AgentStatus.PathQueued : AgentStatus.Idle;
                 }
                 else
                 {
                     heading = math.normalize(heading);
-                    Debug.Log($"Heading: {heading}");
                     agent.currentMoveSpeed = math.lerp(
                         agent.currentMoveSpeed,
-                        agent.remainingDistance > agent.stoppingDistance * 2 ? agent.moveSpeed : 0.25f,
+                        agent.remainingDistance > agent.stoppingDistance ? agent.moveSpeed : 0.75f * agent.moveSpeed,
                         deltaTime * agent.acceleration);
                     agent.targetLinearVelocity = heading * (agent.currentMoveSpeed * deltaTime);
                 }
@@ -244,7 +185,7 @@ namespace NavJob.Systems
                 var targetRotation = quaternion.LookRotationSafe(forward, new float3(0, 1, 0));
                 // Rotations stack right to left,
                 // so first we undo our rotation, then apply the target.
-                var delta = math.mul(math.inverse(rotation.Value),targetRotation);
+                var delta = math.mul(math.inverse(rotation.Value), targetRotation);
 
                 delta.ToAngleAxis(out var angle, out var axis);
 
@@ -258,14 +199,14 @@ namespace NavJob.Systems
                 // since we'd rather undershoot and ease into the correct angle
                 // than overshoot and oscillate around it in the event of errors.
                 var angular = (0.9f * math.radians(angle)) * math.normalize(axis);
-                Debug.Log($"Forward rotation: {forward}");
+                /*Debug.Log($"Forward rotation: {forward}");
                 Debug.Log($"Target rotation quaternion: {targetRotation}");
                 Debug.Log($"Target rotation euler: {math.degrees(targetRotation.Euler())}");
                 Debug.Log($"Delta rotation quaternion: {delta}");
                 Debug.Log($"Delta rotation euler: {math.degrees(delta.Euler())}");
                 Debug.Log($"Angle: {angle}");
                 Debug.Log($"Axis: {math.normalize(axis)}");
-                Debug.Log($"Angular velocity: {angular}");
+                Debug.Log($"Angular velocity: {angular}");*/
 
                 agent.targetAngularVelocity = angular * deltaTime * agent.rotationSpeed;
             }
