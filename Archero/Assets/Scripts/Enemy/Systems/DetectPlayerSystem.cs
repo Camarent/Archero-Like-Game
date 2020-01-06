@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Enemy.Systems
 {
-    [UpdateBefore(typeof(NavAgentSystem))]
+    [UpdateAfter(typeof(NavAgentMoveSystem))]
     public class DetectPlayerSystem : JobComponentSystem
     {
         private float _nextUpdate;
