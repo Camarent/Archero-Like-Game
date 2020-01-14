@@ -85,7 +85,9 @@ public class CharacterControllerAuthoring : MonoBehaviour, IConvertGameObjectToE
     // Whether to affect other rigid bodies
     public int AffectsPhysicsBodies = 1;
 
-    void OnEnable() { }
+    void OnEnable()
+    {
+    }
 
     void IConvertGameObjectToEntity.Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
     {
@@ -130,8 +132,7 @@ public class CharacterControllerSystem : JobComponentSystem
         public float3 cameraWorldPoint;
         public float DeltaTime;
 
-        [ReadOnly]
-        public PhysicsWorld PhysicsWorld;
+        [ReadOnly] public PhysicsWorld PhysicsWorld;
 
         public ArchetypeChunkComponentType<CharacterControllerInternalData> CharacterControllerInternalType;
         public ArchetypeChunkComponentType<Translation> TranslationType;
@@ -198,7 +199,7 @@ public class CharacterControllerSystem : JobComponentSystem
 
                 // User input
                 float3 desiredVelocity = ccInternalData.LinearVelocity;
-                HandleUserInput(ccComponentData, stepInput.Up, surfaceVelocity, transform.pos, transform.rot,ref ccInternalData, ref desiredVelocity);
+                HandleUserInput(ccComponentData, stepInput.Up, surfaceVelocity, transform.pos, transform.rot, ref ccInternalData, ref desiredVelocity);
 
                 // Calculate actual velocity with respect to surface
                 if (ccInternalData.SupportedState == CharacterSupportState.Supported)
@@ -257,6 +258,7 @@ public class CharacterControllerSystem : JobComponentSystem
                     float3 worldSpaceMovement = math.rotate(quaternion.AxisAngle(up, ccInternalData.CurrentRotationAngle), localSpaceMovement);
                     requestedMovementDirection = math.normalize(worldSpaceMovement);
                 }
+
                 shouldJump = jumpRequested && ccInternalData.SupportedState == CharacterSupportState.Supported;
             }
 
@@ -265,7 +267,7 @@ public class CharacterControllerSystem : JobComponentSystem
                 var raycastInput = new RaycastInput
                 {
                     Start = cameraWorldPoint,
-                    End = cameraWorldPoint + new float3(0, -20f,0f),
+                    End = cameraWorldPoint + new float3(0, -20f, 0f),
                     Filter = new CollisionFilter()
                     {
                         BelongsTo = ~0u,
@@ -278,12 +280,12 @@ public class CharacterControllerSystem : JobComponentSystem
                 var playerToMouse = hit.Position - position;
                 playerToMouse.y = 0f;
                 playerToMouse = math.normalize(playerToMouse);
-                
+
                 var forward = math.mul(rotation, new float3(0, 0, 1));
-                
+
                 var angle = MathHelper.SignedAngle(forward, playerToMouse, new float3(0, 1, 0));
-                
-                var horizontal = math.clamp(math.remap(-180f,180f,-ccComponentData.RotationSpeed,ccComponentData.RotationSpeed, angle), -1f, 1f);
+
+                var horizontal = math.clamp(math.remap(-180f, 180f, -ccComponentData.RotationSpeed, ccComponentData.RotationSpeed, angle), -1f, 1f);
                 var haveInput = (math.abs(horizontal) > 0.01f);
                 if (haveInput)
                 {
@@ -305,9 +307,10 @@ public class CharacterControllerSystem : JobComponentSystem
                     // Apply gravity
                     ccInternalData.UnsupportedVelocity += ccComponentData.Gravity * DeltaTime;
                 }
+
                 // If unsupported then keep jump and surface momentum
                 linearVelocity = requestedMovementDirection * ccComponentData.MovementSpeed +
-                    (ccInternalData.SupportedState != CharacterSupportState.Supported ? ccInternalData.UnsupportedVelocity : float3.zero);
+                                 (ccInternalData.SupportedState != CharacterSupportState.Supported ? ccInternalData.UnsupportedVelocity : float3.zero);
             }
         }
 
@@ -349,7 +352,7 @@ public class CharacterControllerSystem : JobComponentSystem
             relative += diff;
 
             linearVelocity = math.rotate(surfaceFrame.Value, relative) + surfaceVelocity +
-                (isJumping ? math.dot(desiredVelocity, up) * up : float3.zero);
+                             (isJumping ? math.dot(desiredVelocity, up) * up : float3.zero);
         }
     }
 
@@ -418,8 +421,8 @@ public class CharacterControllerSystem : JobComponentSystem
         m_EndFramePhysicsSystem = World.GetOrCreateSystem<EndFramePhysicsSystem>();
 
         EntityQueryDesc query = new EntityQueryDesc
-        { 
-            All = new ComponentType[] 
+        {
+            All = new ComponentType[]
             {
                 typeof(CharacterControllerComponentData),
                 typeof(CharacterControllerInternalData),
@@ -447,6 +450,9 @@ public class CharacterControllerSystem : JobComponentSystem
 
         var deferredImpulses = new NativeStream(chunks.Length, Allocator.TempJob);
 
+        if (mainCamera == null)
+            mainCamera = GameObject.FindObjectOfType<Camera>();
+
         var ccJob = new CharacterControllerJob
         {
             // Archetypes
@@ -457,7 +463,7 @@ public class CharacterControllerSystem : JobComponentSystem
             RotationType = rotationType,
             // Input
             DeltaTime = UnityEngine.Time.fixedDeltaTime,
-            cameraWorldPoint = mainCamera.ScreenToWorldPoint(Input.mousePosition),
+            cameraWorldPoint = mainCamera != null ? mainCamera.ScreenToWorldPoint(Input.mousePosition) : Vector3.down * 10000f,
             PhysicsWorld = m_BuildPhysicsWorldSystem.PhysicsWorld,
             DeferredImpulseWriter = deferredImpulses.AsWriter()
         };

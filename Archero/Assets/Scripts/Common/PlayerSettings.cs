@@ -90,7 +90,7 @@ namespace Common
 
         public static bool IsPlayerDead()
         {
-            return _instance.player == null;
+            return _instance==null || _instance.player == null;
         }
 
         public static void IncreaseCoin()
