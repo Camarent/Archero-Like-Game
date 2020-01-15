@@ -34,7 +34,8 @@ namespace Enemy.Systems
             });
         }
 
-        struct TickDamagePlayerOnCollisionJob : ICollisionEventsJob
+        [BurstCompile]
+        public struct TickDamagePlayerOnCollisionJob : ICollisionEventsJob
         {
             [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Entity> players;
 

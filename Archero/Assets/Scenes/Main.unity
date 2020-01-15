@@ -563,67 +563,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 957231861979009465, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 9.16244
-      objectReference: {fileID: 0}
-    - target: {fileID: 957231861979009465, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.0597703
-      objectReference: {fileID: 0}
-    - target: {fileID: 957231861979009465, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4.58122
-      objectReference: {fileID: 0}
     - target: {fileID: 4440110435889670622, guid: 79948eb24d8452444b4e4a4b72a41f4f,
         type: 3}
       propertyPath: m_Name
       value: CoinSpawnerZone
       objectReference: {fileID: 0}
-    - target: {fileID: 7094195714715217008, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: Color.r
-      value: 0.8679245
-      objectReference: {fileID: 0}
-    - target: {fileID: 7094195714715217008, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: Color.g
-      value: 0.8623519
-      objectReference: {fileID: 0}
-    - target: {fileID: 7094195714715217008, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: Color.b
-      value: 0.29067284
-      objectReference: {fileID: 0}
-    - target: {fileID: 9055199702868404837, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: spawnType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9055199702868404837, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: oneTimeSpawn
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9055199702868404837, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: minAmount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9055199702868404837, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: maxAmount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9055199702868404837, guid: 79948eb24d8452444b4e4a4b72a41f4f,
-        type: 3}
-      propertyPath: prefab
-      value: 
-      objectReference: {fileID: 4371270144462822888, guid: 58d1c97501303884e8021d484b81a7a4,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79948eb24d8452444b4e4a4b72a41f4f, type: 3}
 --- !u!1 &2085618124
