@@ -13,17 +13,20 @@ using UnityEngine;
 
 namespace Enemy.Systems
 {
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    [UpdateAfter(typeof(StepPhysicsWorld))]
     public class TickDamagePlayerOnCollisionSystem : JobComponentSystem
     {
         private BuildPhysicsWorld _buildPhysicsWorldSystem;
         private StepPhysicsWorld _stepPhysicsWorldSystem;
         private EntityQuery _playerGroup;
 
+        private EndFramePhysicsSystem _endFramePhysicsSystem;
+
         protected override void OnCreate()
         {
             _buildPhysicsWorldSystem = World.GetOrCreateSystem<BuildPhysicsWorld>();
             _stepPhysicsWorldSystem = World.GetOrCreateSystem<StepPhysicsWorld>();
+            _endFramePhysicsSystem = World.GetOrCreateSystem<EndFramePhysicsSystem>();
             _playerGroup = GetEntityQuery(new EntityQueryDesc
             {
                 All = new ComponentType[]
@@ -78,7 +81,9 @@ namespace Enemy.Systems
                 healths = GetComponentDataFromEntity<Health>(),
                 TickDamages = GetComponentDataFromEntity<TickDamage>()
             }.Schedule(_stepPhysicsWorldSystem.Simulation, ref _buildPhysicsWorldSystem.PhysicsWorld, inputDeps);
-
+            
+            _endFramePhysicsSystem.HandlesToWaitFor.Add(jobHandle);
+            
             return jobHandle;
         }
     }
