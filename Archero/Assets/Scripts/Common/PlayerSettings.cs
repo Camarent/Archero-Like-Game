@@ -24,6 +24,8 @@ namespace Common
         private Entity coin;
         public static Entity Coin => _instance.coin;
 
+        private BlobAssetStore _store;
+
         public static event Action<int> CoinChanged;
         private int _coins;
 
@@ -63,8 +65,15 @@ namespace Common
 
             if (player != null)
             {
-                coin = GameObjectConversionUtility.ConvertGameObjectHierarchy(coinPrefab, player.GetComponent<PlayerShooting>().Settings);
+                _store = new BlobAssetStore();
+                var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, _store);
+                coin = GameObjectConversionUtility.ConvertGameObjectHierarchy(coinPrefab, settings);
             }
+        }
+
+        private void OnDestroy()
+        {
+            _store.Dispose();
         }
 
         public static Vector3 GetPositionAroundPlayer(float radius)

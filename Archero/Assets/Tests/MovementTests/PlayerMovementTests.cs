@@ -38,8 +38,8 @@ namespace Tests.MovementTests
             
             //act
             var keyboard = InputSystem.AddDevice<Keyboard>();
-            Press(keyboard.wKey, 1f);
-            yield return new WaitForSeconds(1f);
+            Press(keyboard.wKey, 2f);
+            yield return new WaitForSeconds(5f);
             
             //assert
             Assert.That(player.transform.position.z, Is.GreaterThan(startedPosition.z));
